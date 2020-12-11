@@ -31,9 +31,11 @@ public class Breakout extends GraphicsProgram {
 	public void run() {
 		this.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 		this.setBackground(Color.BLACK);
-		addKeyListeners();
 		graphics.startScrin();
 		graphics.setGame();
+	}
+	public void init(){
+		addKeyListeners();
 	}
 
 	//выровнять края
