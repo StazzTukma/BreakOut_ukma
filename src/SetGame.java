@@ -6,7 +6,7 @@ import acm.graphics.GLabel;
 import acm.graphics.GRect;
 import acm.program.GraphicsProgram;
 
-public class SetGame {
+public class SetGame extends GraphicsProgram{
 	
 	/** Width and height of application window in pixels */
 	public static final int APPLICATION_WIDTH = 400;
@@ -43,11 +43,7 @@ public class SetGame {
 	
 	private GRect paddle;
 	private GImage startScrin;
-	private GraphicsProgram graphics;
 	
-	SetGame(GraphicsProgram graphics) {
-		this.graphics = graphics;
-	}
 	
 	//выровнять края
 	public void keyPressed(KeyEvent e) {
@@ -62,18 +58,16 @@ public class SetGame {
 			paddle.move(-5, 0);
 		}
 	}	
-	
-	
+
 	public void startScrin() {
 		startScrin = new GImage("startScrin.jpg", 0, 0);
 		startScrin.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
-		graphics.add(startScrin);
-		graphics.waitForClick();
+		add(startScrin);
+		waitForClick();
 		startScrin.setVisible(false);
 	}
 	
 	public void setGame() {	
-		graphics.addKeyListeners();
 		int score = 0;
 		installBrickWall();
 		addHearts();
@@ -97,7 +91,7 @@ public class SetGame {
 								BRICK_HEIGHT);
 		brick.setFilled(true);
 		setColorOfBricks(brick, j);
-		graphics.add(brick);
+		add(brick);
 	}
 
 	// переписать
@@ -118,7 +112,7 @@ public class SetGame {
 		GLabel score_text = new GLabel("Score : " + Integer.toString(score), WIDTH - 100, HEIGHT-10);
 		score_text.setFont("gulim-22");
 		score_text.setColor(Color.WHITE);
-		graphics.add(score_text);
+		add(score_text);
 	}
 	
 	//вниз
@@ -127,7 +121,7 @@ public class SetGame {
 		for (int i = 0; i < 3; i++) {
 			GImage heart = new GImage("fullHeart.jpg", i * heartSize, HEIGHT - heartSize);
 			heart.setSize(heartSize, heartSize);
-			graphics.add(heart);
+			add(heart);
 		}
 	}
 	
@@ -136,6 +130,11 @@ public class SetGame {
 				- PADDLE_Y_OFFSET, PADDLE_WIDTH, PADDLE_HEIGHT);
 		paddle.setFilled(true);
 		paddle.setColor(Color.lightGray);
-		graphics.add(paddle);
+		add(paddle);
 	}
+	
+	public void init(){
+		addKeyListeners();
+	}
+
 }
