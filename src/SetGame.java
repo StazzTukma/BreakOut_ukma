@@ -31,9 +31,9 @@ public class SetGame extends GraphicsProgram {
 	private static final int PADDLE_Y_OFFSET = 50;
 
 	/** Number of bricks per row */
-	private static final int NBRICKS_PER_ROW = 2;
+	private static final int NBRICKS_PER_ROW = 10;
 	/** Number of rows of bricks */
-	private static final int NBRICK_ROWS = 2;
+	private static final int NBRICK_ROWS = 10;
 	/** Separation between bricks */
 	private static final int BRICK_SEP = 4;
 	/** Width of a brick */
@@ -96,6 +96,7 @@ public class SetGame extends GraphicsProgram {
 	public void installBrickWall() {
 		for (int j = 1; j < NBRICK_ROWS + 1; j++) {
 			for (int i = 0; i < NBRICKS_PER_ROW; i++) {
+				if(getElementAt(i, j)==null)
 				createBrick(i, j);
 			}
 		}
@@ -234,43 +235,35 @@ public class SetGame extends GraphicsProgram {
 	}
 	
 	private GObject getCollidingObject() {
-		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 0.5,
-				ball.getY());
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 0.5,ball.getY());
 		if (collisionObject != null) {
 			return collisionObject;
 		}
-		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 1.5,
-				ball.getY());
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 1.5,ball.getY());
 		if (collisionObject != null) {
 			return collisionObject;
 		}
-		collisionObject = getElementAt(ball.getX(), ball.getY() + BALL_RADIUS
-				* 0.5);
+		collisionObject = getElementAt(ball.getX(), ball.getY() + BALL_RADIUS* 0.5);
 		if (collisionObject != null) {
 			return collisionObject;
 		}
-		collisionObject = getElementAt(ball.getX(), ball.getY() + BALL_RADIUS
-				* 1.5);
+		collisionObject = getElementAt(ball.getX(), ball.getY() + BALL_RADIUS* 1.5);
 		if (collisionObject != null) {
 			return collisionObject;
 		}
-		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 0.5,
-				ball.getY() + BALL_RADIUS * 2);
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 0.5,ball.getY() + BALL_RADIUS * 2);
 		if (collisionObject != null) {
 			return collisionObject;
 		}
-		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 1.5,
-				ball.getY() + BALL_RADIUS * 2);
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 1.5,ball.getY() + BALL_RADIUS * 2);
 		if (collisionObject != null) {
 			return collisionObject;
 		}
-		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 2,
-				ball.getY() + BALL_RADIUS * 0.5);
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 2,ball.getY() + BALL_RADIUS * 0.5);
 		if (collisionObject != null) {
 			return collisionObject;
 		}
-		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 2,
-				ball.getY() + BALL_RADIUS * 1.5);
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 2,ball.getY() + BALL_RADIUS * 1.5);
 		if (collisionObject != null) {
 			return collisionObject;
 		}
@@ -291,7 +284,10 @@ public class SetGame extends GraphicsProgram {
 		if (colliter != null && colliter != paddle) {
 			clipOfPunch.stop();
 			clipOfPunch.play();
-			remove(colliter);
+			while(getElementAt(colliter.getX(),colliter.getY())!=null){
+				remove(getElementAt(colliter.getX(),colliter.getY()));
+			}
+			
 			vy = -vy;
 			score++;
 			remove(score_text);
