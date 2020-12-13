@@ -21,7 +21,7 @@ public class SetGame {
 	private static final int PADDLE_HEIGHT = 10;
 
 	/** Offset of the paddle up from the bottom */
-	private static final int PADDLE_Y_OFFSET = 30;
+	private static final int PADDLE_Y_OFFSET = 50;
 
 	/** Number of bricks per row */
 	private static final int NBRICKS_PER_ROW = 10;
@@ -41,14 +41,29 @@ public class SetGame {
 	/** Offset of the top brick row from the top */
 	private static final int BRICK_Y_OFFSET = 70;
 	
-	private static GRect paddle;
+	private GRect paddle;
 	private GImage startScrin;
 	private GraphicsProgram graphics;
 	
 	SetGame(GraphicsProgram graphics) {
 		this.graphics = graphics;
 	}
-
+	
+	//выровнять края
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT
+				|| e.getKeyCode() == KeyEvent.VK_D) {
+			if (paddle.getX() + PADDLE_WIDTH < WIDTH)
+				paddle.move(5, 0);
+		}
+		if (e.getKeyCode() == KeyEvent.VK_LEFT
+				|| e.getKeyCode() == KeyEvent.VK_A) {
+			if (!(paddle.getX() < 0))
+			paddle.move(-5, 0);
+		}
+	}	
+	
+	
 	public void startScrin() {
 		startScrin = new GImage("startScrin.jpg", 0, 0);
 		startScrin.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
@@ -58,6 +73,7 @@ public class SetGame {
 	}
 	
 	public void setGame() {	
+		graphics.addKeyListeners();
 		int score = 0;
 		installBrickWall();
 		addHearts();
@@ -99,17 +115,17 @@ public class SetGame {
 	}
 	
 	public void addScore(int score) {
-		GLabel score_text = new GLabel("Score : " + Integer.toString(score),
-				WIDTH - 100, 24);
+		GLabel score_text = new GLabel("Score : " + Integer.toString(score), WIDTH - 100, HEIGHT-10);
 		score_text.setFont("gulim-22");
 		score_text.setColor(Color.WHITE);
 		graphics.add(score_text);
 	}
 	
+	//вниз
 	public void addHearts() {
 		int heartSize = 30;
 		for (int i = 0; i < 3; i++) {
-			GImage heart = new GImage("fullHeart.jpg", i * heartSize, 1);
+			GImage heart = new GImage("fullHeart.jpg", i * heartSize, HEIGHT - heartSize);
 			heart.setSize(heartSize, heartSize);
 			graphics.add(heart);
 		}
@@ -122,11 +138,4 @@ public class SetGame {
 		paddle.setColor(Color.lightGray);
 		graphics.add(paddle);
 	}
-	
-	public static GRect getPaddle() {
-		return paddle;
-	}
-
-
-	
 }
