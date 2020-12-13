@@ -7,7 +7,7 @@ import acm.program.GraphicsProgram;
 import acm.util.MediaTools;
 import acm.util.RandomGenerator;
 
-public class SetGame extends GraphicsProgram {
+public class FoundationOfTheGame extends GraphicsProgram {
 
 	/** Width and height of application window in pixels */
 	public static final int APPLICATION_WIDTH = 400;
@@ -19,13 +19,16 @@ public class SetGame extends GraphicsProgram {
 	private GOval ball;
 	/** Radius of the ball in pixels */
 	private static final int BALL_RADIUS = 5;
+	/** left or right speed of ball */
 	private double vx = 0.2;
+	/** up or down speed of ball */
 	private double vy = -3;
-	
+	/** object of paddle in the center */
 	private GRect paddle;
 	/** Dimensions of the paddle */
 	private int PADDLE_WIDTH = 60;
 	private static final int PADDLE_HEIGHT = 10;
+	/** Speed of the one click of the paddle */
 	private int SPEED_OF_PADDLE = 10;
 	/** Offset of the paddle up from the bottom */
 	private static final int PADDLE_Y_OFFSET = 50;
@@ -45,20 +48,30 @@ public class SetGame extends GraphicsProgram {
 	
 	/** Random generator */
 	private RandomGenerator rgen = RandomGenerator.getInstance();
+	/** sound of punch to something */
 	private AudioClip clipOfPunch = MediaTools.loadAudioClip("soundOfPunch.wav");
+	/** object that shows what is the thing where ball bumps */
 	private GObject collisionObject;
+	/** Image of start screen */
 	private GImage startScrin;
+	/** Label of score */
 	private GLabel score_text;
+	/** Image of removed heart */
 	private GObject removedHeart;
+	/** number of points that player has */
 	private int score;
+	/** how much time you can lose and don't lost your game*/
 	private int hearts = 3;
+	/**what level is in your game*/
 	private int level = 1;
+	/**number of bricks that u have in game*/
 	private int numberOfBricks = 0;
+	/**size of the picture of the heart*/
 	private int heartSize = 30;
 	
 	/*****************************************************************************************************************************/
 	/*****************************************************************************************************************************/
-	
+	/**method that shows implement first screen*/
 	public void startScrin() {
 		this.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 		this.setBackground(Color.BLACK);
@@ -68,7 +81,7 @@ public class SetGame extends GraphicsProgram {
 		waitForClick();
 		remove(startScrin);
 	}
-	
+	/**method that start the whole game*/
 	public void setGame() {
 		score = 0;
 		numberOfBricks = 0;
@@ -87,12 +100,12 @@ public class SetGame extends GraphicsProgram {
 		createPaddle();
 		addBall();
 	}
-
+	/**method that start game*/
 	public void playGame() {
 		moveBall();
 		addScore(score);
 	}
-	
+	/**method that start playing game*/
 	public void installBrickWall() {
 		for (int j = 1; j < NBRICK_ROWS + 1; j++) {
 			for (int i = 0; i < NBRICKS_PER_ROW; i++) {
@@ -101,7 +114,9 @@ public class SetGame extends GraphicsProgram {
 			}
 		}
 	}
-	
+	/**method that create one brick
+	 * @param i number of bricks in the line
+	 * @param j number of bricks in the column*/
 	public void createBrick(int i, int j) {
 		int BRICK_X_OFFSET = WIDTH / 2 - (BRICK_WIDTH + BRICK_SEP)
 				* NBRICKS_PER_ROW / 2 + BRICK_SEP / 2;
@@ -113,7 +128,7 @@ public class SetGame extends GraphicsProgram {
 		add(brick);
 		numberOfBricks++;
 	}
-	
+	/**creating color for all bricks*/
 	public void setColorOfBricks(GRect brick, int j) {
 		if (j == 1 || j == 2)
 			brick.setColor(Color.RED);
@@ -126,7 +141,7 @@ public class SetGame extends GraphicsProgram {
 		if (j == 9 || j == 10)
 			brick.setColor(Color.CYAN);
 	}
-	
+	/**creating score label*/
 	public void addScore(int score) {
 		score_text = new GLabel("Score : " + Integer.toString(score),
 				WIDTH - 100, APPLICATION_HEIGHT - 10);
@@ -134,9 +149,8 @@ public class SetGame extends GraphicsProgram {
 		score_text.setColor(Color.WHITE);
 		add(score_text);
 	}
-	
+	/**adding 3 hearts*/
 	public void addHearts() {
-
 		for (int i = 0; i < 3; i++) {
 			GImage heart = new GImage("fullHeart.jpg", i * heartSize,
 					APPLICATION_HEIGHT - heartSize);
@@ -144,7 +158,7 @@ public class SetGame extends GraphicsProgram {
 			add(heart);
 		}
 	}
-
+	/**removing the hearts that player lost*/
 	public void removeHeart() {
 		if (hearts == 2) {
 			removedHeart = getElementAt(2 * heartSize, APPLICATION_HEIGHT
@@ -161,6 +175,7 @@ public class SetGame extends GraphicsProgram {
 			remove(removedHeart);
 		}
 	}
+	/**removing all hearts that are present*/
 	public void clearAllHearts(){
 		
 		removedHeart = getElementAt(2 * heartSize, APPLICATION_HEIGHT
@@ -176,7 +191,7 @@ public class SetGame extends GraphicsProgram {
 		if(removedHeart!=null)
 		remove(removedHeart);
 	}
-	
+	/**increase difficulty because of level*/
 	public void setLevelDifficulty() {
 		if (level == 2) {
 			PADDLE_WIDTH *= 0.9;
@@ -189,7 +204,7 @@ public class SetGame extends GraphicsProgram {
 			SPEED_OF_PADDLE *= 1.05;
 		}
 	}
-
+	/**creating graphic object of paddle*/
 	public void createPaddle() {
 		paddle = new GRect(WIDTH / 2 - PADDLE_WIDTH / 2, HEIGHT
 				- PADDLE_Y_OFFSET, PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -197,7 +212,7 @@ public class SetGame extends GraphicsProgram {
 		paddle.setColor(Color.lightGray);
 		add(paddle);
 	}
-	
+	/** moving paddle left if pressed A or <-, and moving it right if pressed D or ->*/
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT
 				|| e.getKeyCode() == KeyEvent.VK_D) {
@@ -212,11 +227,11 @@ public class SetGame extends GraphicsProgram {
 
 		}
 	}
-	
+	/**Initialization of keylisteners*/
 	public void init() {
 		addKeyListeners();
 	}
-
+	/**creating image of ball*/
 	public void addBall() {
 		ball = new GOval(WIDTH / 2 - BALL_RADIUS, HEIGHT - PADDLE_Y_OFFSET
 				- 100, BALL_RADIUS * 2, BALL_RADIUS * 2);
@@ -224,7 +239,7 @@ public class SetGame extends GraphicsProgram {
 		ball.setColor(Color.WHITE);
 		add(ball);
 	}
-	
+	/**making ball moving*/
 	public void moveBall() {
 		while (true) {
 			ball.move(vx, vy);
@@ -233,7 +248,7 @@ public class SetGame extends GraphicsProgram {
 			pause(10);
 		}
 	}
-	
+	/**finding object with what the ball have collision with 8 points*/
 	private GObject getCollidingObject() {
 		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 0.5,ball.getY());
 		if (collisionObject != null) {
@@ -271,14 +286,14 @@ public class SetGame extends GraphicsProgram {
 		
 		return null;
 	}
-	
+	/**checking with what object there is a collision*/
 	public void checkForCollisions() {
 		checkForBrick();
 		checkForBorders();
 		checkForBottomBorder();
 		checkForPaddle();
 	}
-
+	/**checking if there is any collision with a brick*/
 	public void checkForBrick() {
 		GObject colliter = getCollidingObject();
 		if (colliter != null && colliter != paddle) {
@@ -294,7 +309,7 @@ public class SetGame extends GraphicsProgram {
 			addScore(score);
 		}
 	}
-
+	/**cheking if there*/
 	public void checkForPaddle() {
 		GObject colliter = getCollidingObject();
 		if (colliter == paddle) {

@@ -5,7 +5,7 @@
  * 
  * This file will eventually implement the game of Breakout.
  */
-public class Breakout extends SetGame {
+public class Breakout extends FoundationOfTheGame {
 	
 	/** Runs the Breakout program. */
 	
