@@ -293,7 +293,7 @@ public class FoundationOfTheGame extends GraphicsProgram {
 		checkForBottomBorder();
 		checkForPaddle();
 	}
-	/**checking if there is any collision with a brick*/
+	/**checking if there is any collision with a brick, and in that case giving instruction for ball*/
 	public void checkForBrick() {
 		GObject colliter = getCollidingObject();
 		if (colliter != null && colliter != paddle) {
@@ -309,7 +309,7 @@ public class FoundationOfTheGame extends GraphicsProgram {
 			addScore(score);
 		}
 	}
-	/**cheking if there*/
+	/**cheking if there is any collision with paddle, and in that case giving instruction for ball*/
 	public void checkForPaddle() {
 		GObject colliter = getCollidingObject();
 		if (colliter == paddle) {
@@ -323,7 +323,7 @@ public class FoundationOfTheGame extends GraphicsProgram {
 			
 		}
 	}
-
+	/**checking for collision with borders, and in that case giving instruction for ball*/
 	public void checkForBorders() {
 		if (ball.getX() <= 0) {
 			ball.setLocation(0, ball.getY());
@@ -342,7 +342,7 @@ public class FoundationOfTheGame extends GraphicsProgram {
 			clipOfPunch.play();
 		}
 	}
-
+	/**checking for collision with bottom border, and in that case decrease number of health*/
 	public void checkForBottomBorder() {
 		if (ball.getY() + BALL_RADIUS * 2 >= HEIGHT) {
 			vx = 0.2;
@@ -361,7 +361,7 @@ public class FoundationOfTheGame extends GraphicsProgram {
 	
 	/*****************************************************************************************************************************/
 	/*****************************************************************************************************************************/
-//find it
+	/**instruction to what should the game do when gamer broke all bricks and going to the next round*/
 	public void endRound() {
 		if (numberOfBricks == score) {
 			level++;
@@ -385,7 +385,7 @@ public class FoundationOfTheGame extends GraphicsProgram {
 			
 		}
 	}
-	
+	/**instruction to what should the game do when gamer loses the game*/
 	private void endLoseGame(){
 		AudioClip clipOfLose = MediaTools.loadAudioClip("loseOfLevel.wav");
 		clipOfLose.play();
@@ -402,7 +402,7 @@ public class FoundationOfTheGame extends GraphicsProgram {
 		setGame();
 		
 	}
-
+	/**instruction to what should the game do when gamer wins the game*/
 	public void endWinGame() {
 			AudioClip clipOfWin = MediaTools.loadAudioClip("winOfAll.wav");
 			clipOfWin.play();
@@ -418,7 +418,7 @@ public class FoundationOfTheGame extends GraphicsProgram {
 			clearAllHearts();
 			setGame();
 	}
-	
+	/**setting the default properties to the start of the game*/
 	private void setStartSetting(){
 		level = 1;
 		vy = -3;
