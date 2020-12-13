@@ -7,6 +7,8 @@ import acm.program.GraphicsProgram;
 import acm.util.MediaTools;
 import acm.util.RandomGenerator;
 
+//file: FoundationOfTheGame.java
+
 public class FoundationOfTheGame extends GraphicsProgram {
 
 	/** Width and height of application window in pixels */
@@ -23,7 +25,7 @@ public class FoundationOfTheGame extends GraphicsProgram {
 	private double vx = 0.2;
 	/** up or down speed of ball */
 	private double vy = -3;
-	/** object of paddle in the center */
+	/** object of paddle at the center */
 	private GRect paddle;
 	/** Dimensions of the paddle */
 	private int PADDLE_WIDTH = 60;
@@ -315,7 +317,7 @@ public class FoundationOfTheGame extends GraphicsProgram {
 		if (colliter == paddle) {
 				clipOfPunch.stop();
 				clipOfPunch.play();
-				ball.setLocation(ball.getX(), paddle.getY() - PADDLE_HEIGHT);
+				ball.setLocation(ball.getX(), paddle.getY() - BALL_RADIUS*2);
 				vx = rgen.nextDouble(1.0, 3.0);
 				if (rgen.nextBoolean(0.5))
 					vx = -vx;
