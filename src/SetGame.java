@@ -360,7 +360,7 @@ public class SetGame extends GraphicsProgram {
 			}
 			AudioClip clipOfWin = MediaTools.loadAudioClip("winOfLevel.wav");
 			clipOfWin.play();
-			GImage winRound = new GImage("winRound.jpg", 0, 0);
+			GImage winRound = new GImage("roundWin.png", 0, 0);
 			winRound.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 			add(winRound);
 			remove(ball);
@@ -378,7 +378,7 @@ public class SetGame extends GraphicsProgram {
 	private void endLoseGame(){
 		AudioClip clipOfLose = MediaTools.loadAudioClip("loseOfLevel.wav");
 		clipOfLose.play();
-		GImage gameOver = new GImage("gameOver.jpg", 0, 0);
+		GImage gameOver = new GImage("gameOver.png", 0, 0);
 		gameOver.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 		add(gameOver);
 		setStartSetting();
@@ -395,7 +395,7 @@ public class SetGame extends GraphicsProgram {
 	public void endWinGame() {
 			AudioClip clipOfWin = MediaTools.loadAudioClip("winOfAll.wav");
 			clipOfWin.play();
-			GImage winScreen = new GImage("winScreen.jpg", 0, 0);
+			GImage winScreen = new GImage("gameWin.png", 0, 0);
 			winScreen.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 			add(winScreen);
 			setStartSetting();
