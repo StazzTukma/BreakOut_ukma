@@ -1,8 +1,10 @@
+import java.applet.AudioClip;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import acm.graphics.*;
 import acm.program.GraphicsProgram;
+import acm.util.MediaTools;
 import acm.util.RandomGenerator;
 
 public class SetGame extends GraphicsProgram {
@@ -29,9 +31,9 @@ public class SetGame extends GraphicsProgram {
 	private static final int PADDLE_Y_OFFSET = 50;
 
 	/** Number of bricks per row */
-	private static final int NBRICKS_PER_ROW = 1;
+	private static final int NBRICKS_PER_ROW = 2;
 	/** Number of rows of bricks */
-	private static final int NBRICK_ROWS = 1;
+	private static final int NBRICK_ROWS = 2;
 	/** Separation between bricks */
 	private static final int BRICK_SEP = 4;
 	/** Width of a brick */
@@ -40,14 +42,14 @@ public class SetGame extends GraphicsProgram {
 	private static final int BRICK_HEIGHT = 8;
 	/** Offset of the top brick row from the top */
 	private static final int BRICK_Y_OFFSET = 70;
-
+	
 	/** Random generator */
 	private RandomGenerator rgen = RandomGenerator.getInstance();
-	
+	private AudioClip clipOfPunch = MediaTools.loadAudioClip("soundOfPunch.wav");
 	private GObject collisionObject;
 	private GImage startScrin;
 	private GLabel score_text;
-	
+	private GObject removedHeart;
 	private int score;
 	private int hearts = 3;
 	private int level = 1;
@@ -143,7 +145,6 @@ public class SetGame extends GraphicsProgram {
 	}
 
 	public void removeHeart() {
-		GObject removedHeart;
 		if (hearts == 2) {
 			removedHeart = getElementAt(2 * heartSize, APPLICATION_HEIGHT
 					- heartSize);
@@ -159,6 +160,21 @@ public class SetGame extends GraphicsProgram {
 			remove(removedHeart);
 		}
 	}
+	public void clearAllHearts(){
+		
+		removedHeart = getElementAt(2 * heartSize, APPLICATION_HEIGHT
+				- heartSize);
+		if(removedHeart!=null)
+		remove(removedHeart);
+		removedHeart = getElementAt( heartSize, APPLICATION_HEIGHT
+				- heartSize);
+		if(removedHeart!=null)
+		remove(removedHeart);
+		removedHeart = getElementAt(0, APPLICATION_HEIGHT
+				- heartSize);
+		if(removedHeart!=null)
+		remove(removedHeart);
+	}
 	
 	public void setLevelDifficulty() {
 		if (level == 2) {
@@ -173,9 +189,6 @@ public class SetGame extends GraphicsProgram {
 		}
 	}
 
-	/*****************************************************************************************************************************/
-	/*****************************************************************************************************************************/
-	
 	public void createPaddle() {
 		paddle = new GRect(WIDTH / 2 - PADDLE_WIDTH / 2, HEIGHT
 				- PADDLE_Y_OFFSET, PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -211,9 +224,6 @@ public class SetGame extends GraphicsProgram {
 		add(ball);
 	}
 	
-	/*****************************************************************************************************************************/
-	/*****************************************************************************************************************************/
-	
 	public void moveBall() {
 		while (true) {
 			ball.move(vx, vy);
@@ -226,24 +236,46 @@ public class SetGame extends GraphicsProgram {
 	private GObject getCollidingObject() {
 		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 0.5,
 				ball.getY());
-		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 1.5,
-				ball.getY());
-		collisionObject = getElementAt(ball.getX(), ball.getY() + BALL_RADIUS
-				* 0.5);
-		collisionObject = getElementAt(ball.getX(), ball.getY() + BALL_RADIUS
-				* 1.5);
-		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 0.5,
-				ball.getY() + BALL_RADIUS * 2);
-		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 1.5,
-				ball.getY() + BALL_RADIUS * 2);
-		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 2,
-				ball.getY() + BALL_RADIUS * 0.5);
-		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 2,
-				ball.getY() + BALL_RADIUS * 1.5);
-
 		if (collisionObject != null) {
 			return collisionObject;
 		}
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 1.5,
+				ball.getY());
+		if (collisionObject != null) {
+			return collisionObject;
+		}
+		collisionObject = getElementAt(ball.getX(), ball.getY() + BALL_RADIUS
+				* 0.5);
+		if (collisionObject != null) {
+			return collisionObject;
+		}
+		collisionObject = getElementAt(ball.getX(), ball.getY() + BALL_RADIUS
+				* 1.5);
+		if (collisionObject != null) {
+			return collisionObject;
+		}
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 0.5,
+				ball.getY() + BALL_RADIUS * 2);
+		if (collisionObject != null) {
+			return collisionObject;
+		}
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 1.5,
+				ball.getY() + BALL_RADIUS * 2);
+		if (collisionObject != null) {
+			return collisionObject;
+		}
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 2,
+				ball.getY() + BALL_RADIUS * 0.5);
+		if (collisionObject != null) {
+			return collisionObject;
+		}
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 2,
+				ball.getY() + BALL_RADIUS * 1.5);
+		if (collisionObject != null) {
+			return collisionObject;
+		}
+
+		
 		return null;
 	}
 	
@@ -257,6 +289,8 @@ public class SetGame extends GraphicsProgram {
 	public void checkForBrick() {
 		GObject colliter = getCollidingObject();
 		if (colliter != null && colliter != paddle) {
+			clipOfPunch.stop();
+			clipOfPunch.play();
 			remove(colliter);
 			vy = -vy;
 			score++;
@@ -268,17 +302,14 @@ public class SetGame extends GraphicsProgram {
 	public void checkForPaddle() {
 		GObject colliter = getCollidingObject();
 		if (colliter == paddle) {
-			if ((ball.getX() + BALL_RADIUS < paddle.getX() + PADDLE_WIDTH && ball
-					.getX() + BALL_RADIUS > paddle.getX())
-					&& ball.getY() + BALL_RADIUS * 2 >= HEIGHT
-							- PADDLE_Y_OFFSET) {
+				clipOfPunch.stop();
+				clipOfPunch.play();
 				ball.setLocation(ball.getX(), paddle.getY() - PADDLE_HEIGHT);
-
 				vx = rgen.nextDouble(1.0, 3.0);
 				if (rgen.nextBoolean(0.5))
 					vx = -vx;
 				vy = -vy;
-			}
+			
 		}
 	}
 
@@ -286,12 +317,18 @@ public class SetGame extends GraphicsProgram {
 		if (ball.getX() <= 0) {
 			ball.setLocation(0, ball.getY());
 			vx = -vx;
+			clipOfPunch.stop();
+			clipOfPunch.play();
 		} else if (ball.getY() <= 0) {
 			ball.setLocation(ball.getX(), 0);
 			vy = -vy;
+			clipOfPunch.stop();
+			clipOfPunch.play();
 		} else if (ball.getX() + BALL_RADIUS * 2 >= WIDTH) {
 			ball.setLocation(WIDTH - BALL_RADIUS * 2, ball.getY());
 			vx = -vx;
+			clipOfPunch.stop();
+			clipOfPunch.play();
 		}
 	}
 
@@ -321,6 +358,8 @@ public class SetGame extends GraphicsProgram {
 				endWinGame();
 				return;
 			}
+			AudioClip clipOfWin = MediaTools.loadAudioClip("winOfLevel.wav");
+			clipOfWin.play();
 			GImage winRound = new GImage("winRound.jpg", 0, 0);
 			winRound.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 			add(winRound);
@@ -328,32 +367,44 @@ public class SetGame extends GraphicsProgram {
 			vx = 0.2;
 
 			waitForClick();
+			clipOfWin.stop();
 			remove(winRound);
+			clearAllHearts();
 			setGame();
+			
 		}
 	}
 	
 	private void endLoseGame(){
+		AudioClip clipOfLose = MediaTools.loadAudioClip("loseOfLevel.wav");
+		clipOfLose.play();
 		GImage gameOver = new GImage("gameOver.jpg", 0, 0);
 		gameOver.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 		add(gameOver);
 		setStartSetting();
 
 		waitForClick();
+		clipOfLose.stop();
 		remove(gameOver);
 		startScrin();
+		clearAllHearts();
 		setGame();
+		
 	}
 
 	public void endWinGame() {
+			AudioClip clipOfWin = MediaTools.loadAudioClip("winOfAll.wav");
+			clipOfWin.play();
 			GImage winScreen = new GImage("winScreen.jpg", 0, 0);
 			winScreen.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 			add(winScreen);
 			setStartSetting();
 			
 			waitForClick();
+			clipOfWin.stop();
 			remove(winScreen);
 			startScrin();
+			clearAllHearts();
 			setGame();
 	}
 	
