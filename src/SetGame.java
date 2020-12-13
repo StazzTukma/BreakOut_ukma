@@ -6,7 +6,7 @@ import acm.graphics.GLabel;
 import acm.graphics.GRect;
 import acm.program.GraphicsProgram;
 
-public class SetGame {
+public class SetGame extends GraphicsProgram{
 	
 	/** Width and height of application window in pixels */
 	public static final int APPLICATION_WIDTH = 400;
@@ -45,15 +45,15 @@ public class SetGame {
 	private GImage startScrin;
 	private GraphicsProgram graphics;
 	
-	SetGame(GraphicsProgram graphics) {
+	/*SetGame(GraphicsProgram graphics) {
 		this.graphics = graphics;
-	}
+	}*/
 
 	public void startScrin() {
 		startScrin = new GImage("startScrin.jpg", 0, 0);
 		startScrin.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
-		graphics.add(startScrin);
-		graphics.waitForClick();
+		add(startScrin);
+		waitForClick();
 		startScrin.setVisible(false);
 	}
 	
@@ -81,7 +81,7 @@ public class SetGame {
 								BRICK_HEIGHT);
 		brick.setFilled(true);
 		setColorOfBricks(brick, j);
-		graphics.add(brick);
+		add(brick);
 	}
 
 	// переписать
@@ -103,7 +103,7 @@ public class SetGame {
 				WIDTH - 100, 24);
 		score_text.setFont("gulim-22");
 		score_text.setColor(Color.WHITE);
-		graphics.add(score_text);
+		add(score_text);
 	}
 	
 	public void addHearts() {
@@ -111,7 +111,7 @@ public class SetGame {
 		for (int i = 0; i < 3; i++) {
 			GImage heart = new GImage("fullHeart.jpg", i * heartSize, 1);
 			heart.setSize(heartSize, heartSize);
-			graphics.add(heart);
+			add(heart);
 		}
 	}
 	
@@ -120,13 +120,28 @@ public class SetGame {
 				- PADDLE_Y_OFFSET, PADDLE_WIDTH, PADDLE_HEIGHT);
 		paddle.setFilled(true);
 		paddle.setColor(Color.lightGray);
-		graphics.add(paddle);
+		add(paddle);
 	}
 	
-	public static GRect getPaddle() {
+	public GRect getPaddle() {
 		return paddle;
 	}
-
-
+	
+	public void init(){
+		addKeyListeners();
+	}
+	
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT
+				|| e.getKeyCode() == KeyEvent.VK_D) {
+			if (paddle.getX() + PADDLE_WIDTH < WIDTH)
+				paddle.move(5, 0);
+		}
+		if (e.getKeyCode() == KeyEvent.VK_LEFT
+				|| e.getKeyCode() == KeyEvent.VK_A) {
+			if (!(paddle.getX() < 0))
+				paddle.move(-5, 0);
+		}
+	}	
 	
 }

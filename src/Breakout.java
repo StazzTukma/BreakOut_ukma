@@ -13,7 +13,8 @@ import acm.program.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class Breakout extends GraphicsProgram {
+public class Breakout extends SetGame {
+	//GRect rect = new GRect(400,400,20,20);
 
 	/** Width and height of application window in pixels */
 	public static final int APPLICATION_WIDTH = 400;
@@ -23,35 +24,26 @@ public class Breakout extends GraphicsProgram {
 	
 	/** Radius of the ball in pixels */
 	private static final int BALL_RADIUS = 10;
-
+	
 	/** Number of turns */
 	private static final int NTURNS = 3;
-
+	private static final int WIDTH = APPLICATION_WIDTH;
 	/** Runs the Breakout program. */
 	public void run() {
 		this.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 		this.setBackground(Color.BLACK);
-		graphics.startScrin();
-		graphics.setGame();
+		super.startScrin();
+		super.setGame();
+		/*rect.setFilled(true);
+		rect.setColor(Color.RED);
+		add(rect);*/
+		
 	}
-	public void init(){
-		addKeyListeners();
-	}
+	
 
 	//выровнять края
-	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_RIGHT
-				|| e.getKeyCode() == KeyEvent.VK_D) {
-			if (paddle.getX() + PADDLE_WIDTH < WIDTH)
-				paddle.move(5, 0);
-		}
-		if (e.getKeyCode() == KeyEvent.VK_LEFT
-				|| e.getKeyCode() == KeyEvent.VK_A) {
-			if (!(paddle.getX() < 0))
-			paddle.move(-5, 0);
-		}
-	}	
 	
-	private GRect paddle = SetGame.getPaddle();
-	SetGame graphics = new SetGame(this);
+	//SetGame graphics = new SetGame(this);
+	//private GRect paddle = super.getPaddle();
+	
 }
