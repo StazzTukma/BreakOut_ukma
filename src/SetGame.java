@@ -13,24 +13,24 @@ public class SetGame extends GraphicsProgram {
 
 	/** Dimensions of game board (usually the same) */
 	private static final int WIDTH = APPLICATION_WIDTH;
-	private static final int HEIGHT = APPLICATION_HEIGHT;
+	private static final int HEIGHT = APPLICATION_HEIGHT - 40;
 
 	/** Radius of the ball in pixels */
 	private static final int BALL_RADIUS = 5;
-	private double vx = 3;
+	private double vx = 0.2;
 	private double vy = -3;
 	/** Dimensions of the paddle */
-	private static final int PADDLE_WIDTH = 60;
+	private int PADDLE_WIDTH = 60;
 	private static final int PADDLE_HEIGHT = 10;
 
 	/** Offset of the paddle up from the bottom */
 	private static final int PADDLE_Y_OFFSET = 50;
 
 	/** Number of bricks per row */
-	private static final int NBRICKS_PER_ROW = 10;
+	private static final int NBRICKS_PER_ROW = 1;
 
 	/** Number of rows of bricks */
-	private static final int NBRICK_ROWS = 10;
+	private static final int NBRICK_ROWS = 1;
 
 	/** Separation between bricks */
 	private static final int BRICK_SEP = 4;
@@ -45,36 +45,53 @@ public class SetGame extends GraphicsProgram {
 
 	/** Offset of the top brick row from the top */
 	private static final int BRICK_Y_OFFSET = 70;
-	
+
 	/** Random generator */
 	private RandomGenerator rgen = RandomGenerator.getInstance();
-	private static final int SPEED_OF_PADDLE = 10;
-	public GObject collision;
-	//public GObject point;
+	private int SPEED_OF_PADDLE = 10;
+	public GObject collisionObject;
 	private GRect paddle;
 	private GImage startScrin;
 	private GOval ball;
 	private int score;
 	private GLabel score_text;
+	private int hearts = 3;
+	private int level = 1;
+	private int numberOfBricks = 0;
+	private int heartSize = 30;
 
-	// выровнять края
+	public void setLevelDifficulty() {
+		if (level == 2) {
+			PADDLE_WIDTH *= 0.9;
+			vy *= 1.5;
+			SPEED_OF_PADDLE *= 1.3;
+		}
+		if (level == 3) {
+			PADDLE_WIDTH *= 0.9;
+			vy *= 1.2;
+			SPEED_OF_PADDLE *= 1.05;
+		}
+	}
+
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT
 				|| e.getKeyCode() == KeyEvent.VK_D) {
-			if (paddle.getX() + PADDLE_WIDTH< WIDTH)
+			if (paddle.getX() + PADDLE_WIDTH < WIDTH)
 				paddle.move(SPEED_OF_PADDLE, 0);
-			
+
 		}
 		if (e.getKeyCode() == KeyEvent.VK_LEFT
 				|| e.getKeyCode() == KeyEvent.VK_A) {
-			if (!(paddle.getX()<= 0))
+			if (!(paddle.getX() <= 0))
 				paddle.move(-1 * SPEED_OF_PADDLE, 0);
-			
+
 		}
 	}
 
 	public void startScrin() {
-		startScrin = new GImage("startScrin.jpg", 0, 0);
+		this.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
+		this.setBackground(Color.BLACK);
+		startScrin = new GImage("startScreen.jpg", 0, 0);
 		startScrin.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 		add(startScrin);
 		waitForClick();
@@ -83,17 +100,27 @@ public class SetGame extends GraphicsProgram {
 
 	public void setGame() {
 		score = 0;
+		numberOfBricks = 0;
+		hearts = 3;
+		
+		if (paddle != null && score_text != null && ball != null) {
+			remove(paddle);
+			remove(ball);
+			remove(score_text);
+		}
+
+		setLevelDifficulty();
 		installBrickWall();
 		addHearts();
 		addScore(score);
 		createPaddle();
 		addBall();
 	}
+
 	public void playGame() {
-		moveOfBall();
+		moveBall();
 		addScore(score);
 	}
-	
 
 	public void installBrickWall() {
 		for (int j = 1; j < NBRICK_ROWS + 1; j++) {
@@ -112,9 +139,9 @@ public class SetGame extends GraphicsProgram {
 		brick.setFilled(true);
 		setColorOfBricks(brick, j);
 		add(brick);
+		numberOfBricks++;
 	}
 
-	// переписать
 	public void setColorOfBricks(GRect brick, int j) {
 		if (j == 1 || j == 2)
 			brick.setColor(Color.RED);
@@ -130,20 +157,37 @@ public class SetGame extends GraphicsProgram {
 
 	public void addScore(int score) {
 		score_text = new GLabel("Score : " + Integer.toString(score),
-				WIDTH - 100, HEIGHT - 10);
+				WIDTH - 100, APPLICATION_HEIGHT - 10);
 		score_text.setFont("gulim-22");
 		score_text.setColor(Color.WHITE);
 		add(score_text);
 	}
 
-	// вниз
 	public void addHearts() {
-		int heartSize = 30;
+
 		for (int i = 0; i < 3; i++) {
-			GImage heart = new GImage("fullHeart.jpg", i * heartSize, HEIGHT
-					- heartSize);
+			GImage heart = new GImage("fullHeart.jpg", i * heartSize,
+					APPLICATION_HEIGHT - heartSize);
 			heart.setSize(heartSize, heartSize);
 			add(heart);
+		}
+	}
+
+	public void removeHeart() {
+		GObject removedHeart;
+		if (hearts == 2) {
+			removedHeart = getElementAt(2 * heartSize, APPLICATION_HEIGHT
+					- heartSize);
+			remove(removedHeart);
+		}
+		if (hearts == 1) {
+			removedHeart = getElementAt(heartSize, APPLICATION_HEIGHT
+					- heartSize);
+			remove(removedHeart);
+		}
+		if (hearts == 0) {
+			removedHeart = getElementAt(0, APPLICATION_HEIGHT - heartSize);
+			remove(removedHeart);
 		}
 	}
 
@@ -156,8 +200,8 @@ public class SetGame extends GraphicsProgram {
 	}
 
 	public void addBall() {
-		ball = new GOval(WIDTH / 2 - BALL_RADIUS,
-				HEIGHT - PADDLE_Y_OFFSET - 30, BALL_RADIUS * 2, BALL_RADIUS * 2);
+		ball = new GOval(WIDTH / 2 - BALL_RADIUS, HEIGHT - PADDLE_Y_OFFSET
+				- 100, BALL_RADIUS * 2, BALL_RADIUS * 2);
 		ball.setFilled(true);
 		ball.setColor(Color.WHITE);
 		add(ball);
@@ -167,59 +211,147 @@ public class SetGame extends GraphicsProgram {
 		addKeyListeners();
 	}
 
-	/*
-*/
-	public void moveOfBall() {
-		while (true) {
-			ball.move(vx, vy);
-			GObject colliter = getCollidingObject();
-			if(colliter !=null && colliter!= paddle){
+	public void checkForBrick() {
+		GObject colliter = getCollidingObject();
+		if (colliter != null && colliter != paddle) {
 			remove(colliter);
-			vy=-vy;
+			vy = -vy;
 			score++;
 			remove(score_text);
 			addScore(score);
-			}
-				
-			if (ball.getX() <= 0) {
-				ball.setLocation(0, ball.getY());
-				vx = -vx;
-			} else if (ball.getY() <= 0) {
-				ball.setLocation(ball.getX(), 0);
-				vy = -vy;
-			} else if (ball.getX() + BALL_RADIUS * 2 >= WIDTH) {
-				ball.setLocation(WIDTH - BALL_RADIUS * 2, ball.getY());
-				vx = -vx;
-			} else if (ball.getY() + BALL_RADIUS * 2 >= HEIGHT) {
-				ball.setLocation(ball.getX(), HEIGHT - BALL_RADIUS * 2);
-				vy = -vy;
-			}
-			if ((ball.getX() + BALL_RADIUS < paddle.getX() + PADDLE_WIDTH && 
-					ball.getX() + BALL_RADIUS > paddle.getX())&& 
-					ball.getY() + BALL_RADIUS * 2 >= HEIGHT - PADDLE_Y_OFFSET){
-				ball.setLocation(ball.getX(),paddle.getY()-PADDLE_HEIGHT);
-				vx = rgen.nextDouble(1.0, 3.0); 
-				if (rgen.nextBoolean(0.5)) 
-					vx =-vx;
-				vy=-vy;
-				
-			}
-			pause(10);
-
 		}
 	}
-	private GObject getCollidingObject(){
-		
-			collision = getElementAt(ball.getX(), ball.getY());
-			collision = getElementAt(ball.getX(), ball.getY()+2*BALL_RADIUS);
-			collision = getElementAt(ball.getX()+2*BALL_RADIUS, ball.getY());
-			collision = getElementAt(ball.getX()+2*BALL_RADIUS, ball.getY()+2*BALL_RADIUS);
-			if(collision!=null){
-				return collision;
-				
+
+	public void checkForPaddle() {
+		GObject colliter = getCollidingObject();
+		if (colliter == paddle) {
+			if ((ball.getX() + BALL_RADIUS < paddle.getX() + PADDLE_WIDTH && ball
+					.getX() + BALL_RADIUS > paddle.getX())
+					&& ball.getY() + BALL_RADIUS * 2 >= HEIGHT
+							- PADDLE_Y_OFFSET) {
+				ball.setLocation(ball.getX(), paddle.getY() - PADDLE_HEIGHT);
+
+				vx = rgen.nextDouble(1.0, 3.0);
+				if (rgen.nextBoolean(0.5))
+					vx = -vx;
+				vy = -vy;
 			}
+		}
+	}
+
+	public void checkForBorders() {
+		if (ball.getX() <= 0) {
+			ball.setLocation(0, ball.getY());
+			vx = -vx;
+		} else if (ball.getY() <= 0) {
+			ball.setLocation(ball.getX(), 0);
+			vy = -vy;
+		} else if (ball.getX() + BALL_RADIUS * 2 >= WIDTH) {
+			ball.setLocation(WIDTH - BALL_RADIUS * 2, ball.getY());
+			vx = -vx;
+		}
+	}
+
+	public void checkForBottomBorder() {
+		if (ball.getY() + BALL_RADIUS * 2 >= HEIGHT) {
+			vx = 0.2;
+			hearts--;
+			if(hearts == 0){
+				endLoseGame();
+				return;
+			}
+			removeHeart();
+			remove(ball);
+			pause(1000);
+			addBall();
+			pause(1500);
+		}
+	}
+
+	public void checkForCollisions() {
+		checkForBrick();
+		checkForBorders();
+		checkForBottomBorder();
+		checkForPaddle();
+	}
+
+	public void endRound() {
+		if (numberOfBricks == score) {
+			level++;
+			if(level == 4){
+				endWinGame();
+				return;
+			}
+			GImage winRound = new GImage("winRound.jpg", 0, 0);
+			winRound.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
+			add(winRound);
+			remove(ball);
+			vx = 0.2;
+
+			waitForClick();
+			remove(winRound);
+			setGame();
+		}
+	}
+	
+	private void endLoseGame(){
+		GImage gameOver = new GImage("gameOver.jpg", 0, 0);
+		gameOver.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
+		add(gameOver);
+		level = 1;
+		vy = -3;
+
+		waitForClick();
+		remove(gameOver);
+		startScrin();
+		setGame();
+	}
+
+	public void endWinGame() {
+			GImage winScreen = new GImage("winScreen.jpg", 0, 0);
+			winScreen.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
+			add(winScreen);
+			level = 1;
+			vy = -3;
+
+			waitForClick();
+			remove(winScreen);
+			startScrin();
+			setGame();
+	}
+
+	public void moveBall() {
+		while (true) {
+			ball.move(vx, vy);
+			checkForCollisions();
+			endRound();
+			pause(10);
+		}
+	}
+
+	private GObject getCollidingObject() {
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 0.5,
+				ball.getY());
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 1.5,
+				ball.getY());
+		collisionObject = getElementAt(ball.getX(), ball.getY() + BALL_RADIUS
+				* 0.5);
+		collisionObject = getElementAt(ball.getX(), ball.getY() + BALL_RADIUS
+				* 1.5);
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 0.5,
+				ball.getY() + BALL_RADIUS * 2);
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 1.5,
+				ball.getY() + BALL_RADIUS * 2);
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 2,
+				ball.getY() + BALL_RADIUS * 0.5);
+		collisionObject = getElementAt(ball.getX() + BALL_RADIUS * 2,
+				ball.getY() + BALL_RADIUS * 1.5);
+
+		if (collisionObject != null) {
+			return collisionObject;
+		}
 		return null;
-		
+
 	}
 
 }
